@@ -70,3 +70,42 @@ io.sockets.on('connection', function (socket) {
 ```
 
 Эта информация нужна будет для того, что бы отследить владельца socket-коннекта и дать возможность приложению четко определять конечного клиента для отправки сокета.
+
+# Разработка клиентской части
+
+
+Когда браузер подключается к приложению, сервер отдает ему файл `index.ejs` из директории `views`. 
+
+Для подключения браузера к серверу Socket.IO требуется клиентская библиотека Socket.io. Так как мы используем Socket.IO через Express, мы можем использовать получить файл библиотеки с сервера с помощью следующего тега:
+
+`<script src="/socket.io/socket.io.js"></script>`
+
+Большая часть логики приложения и весь клиентский код расположен в файле `./public/javascript/im.js`.
+Код заключен в Javascript-объект `IM`. Это означает, что все переменные и функции, используемые в приложении, являются свойствами объектов `IM`. Структура клиентского кода выглядит примерно так:
+
+```javascript
+IM = {
+    socket: null,
+    connect: function() {
+        this.socket = Node.socket; // ссылка на Socket.io объект
+        this.listenEvents();
+
+    },
+    listenEvents: function() {
+        this.socket.on('events', function(data) {
+            if (data.fn) {
+                IM[data.fn](data.message);
+            }
+        });
+    },
+    send: function(el, prev) {
+    
+    },
+    addMessage: function (data) {
+    
+    },
+    refreshOnline: function(data) {
+    
+    }
+};
+```
