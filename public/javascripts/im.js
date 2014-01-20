@@ -65,10 +65,6 @@ IM = {
                 $('.user_list').html(html);
             }
         }
-        //console.log(online);
-//        if (!$('#user_' + data.user_id).length) {
-//            $('.user_list').append('<li id="user_' + data.user_id + '" class="user_list_block">' + data.user_name + '</li>');
-//        }
     }
 };
 
