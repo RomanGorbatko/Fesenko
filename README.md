@@ -54,3 +54,19 @@ io.sockets.on('connection', function (socket) {
     im.IM.setConnection(socket);
 });
 ```
+
+Функция `setConnection` собирает первичную информацию о пользователе, который зашел на сайт:
+```javascript
+    setConnection: function (socket) {
+        this.socket = socket;
+        this.socket.handshake.getSession(function(err, session) {
+            if (IM.connectedUsers[session._sessionid] === undefined) {
+                IM.connectedUsers[session._sessionid] = [];
+            }
+
+            IM.connectedUsers[session._sessionid].push(IM.socket.id);
+        });
+    },
+```
+
+Эта информация нужна будет для того, что бы отследить владельца socket-коннекта и дать возможность приложению четко определять конечного клиента для отправки сокета.
