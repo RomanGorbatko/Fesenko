@@ -239,3 +239,62 @@ Node = {
         });
     },
 ```
+
+* **getDialog** - функция возвращающая список сообщений определенного диалога. В URL-е передается id диалога, по которому происходит выборка и формируется конечный объект который нужнен для отрисовки списка сообщений и списка online-пользователей данного диалога:
+
+```javascript
+    getDialog: function(request) {
+
+        Array.prototype.contains = function(k, callback) {
+            
+        }
+
+        this.inDialog.contains(request.session._sessionid, function(found) {
+            
+        });
+
+        dialogsDb.find({_id: dialogsDb.id(request.params.id)}, function(err, int) {
+            if (err) throw err;
+            if (int.length) {
+                messagesDb.find({dialog_id: dialogsDb.id(int[0]._id)}, function(err, messages) {
+                    if (err) throw err;
+
+                    if (messages.length) {
+                        async.concat(messages, function(row, next) {
+                            usersDb.findById(row.owner, function(err, user) {
+                                row['user'] = user;
+                                next(err, row);
+                            });
+                        }, function(err, rows) {
+                            if (err) throw err;
+                            
+                        });
+                    } else {
+                    
+                    }
+                });
+            } else {
+            
+            }
+        });
+    },
+```
+
+* **addMessage**: - функция-обработчик входящих сообщений. Сохраняет информацию о входящем сообщении, если все прошло хорошо, собирает информацию о пользователе-собеседнике и отправляет на клиент callback-функцию `addMessage`.
+
+```javascript
+    addMessage: function(post) {
+        messagesDb.insert({text: post.message, owner: post.session.user_id, timestamp: new Date().getTime(), dialog_id: dialogsDb.id(post._id)}, function(err, inst) {
+            if (err) throw err;
+
+            usersDb.findById(inst.owner, function(err, user) {
+                if (err) throw err;
+                IM.inDialog.forEach(function(row, index) {
+                    IM.connectedUsers[row].forEach(function(sock, index) {
+                        IM.parentSocket.socket(sock).emit('events', {fn: 'addMessage', message: {inst: inst, sender: user}});
+                    });
+                });
+            });
+        });
+    }
+```
