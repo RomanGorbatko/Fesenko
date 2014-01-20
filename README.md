@@ -87,7 +87,10 @@ io.sockets.on('connection', function (socket) {
 IM = {
     socket: null,
     connect: function() {
-        this.socket = Node.socket; // ссылка на Socket.io объект
+        // ссылка на Socket.io объект
+        this.socket = Node.socket;
+        
+        // вызов метода-слушателя, который real-time принимает информацию от node.js-сервера
         this.listenEvents();
 
     },
@@ -109,3 +112,42 @@ IM = {
     }
 };
 ```
+
+При первом запуске приложения после окончания загрузки документа вызываются 2 функции: `Node.init('http://localhost'); и IM.connect();`. Первая настраивает подключение через Socket.IO, вторая показывает стартовый экран диалогов в браузере.
+
+Вызов первой функции `Node.init('http://localhost');` инициализирует подключение через Socket.IO между браузером и сервером:
+
+```javascript
+Node = {
+    socket: null,
+    urlIO: null,
+    connect: function() {
+        try {
+            this.socket = io.connect(this.urlIO + ':3000', {
+                'connect timeout': 500,
+                'reconnect': true,
+                'reconnection delay': 500,
+                'reopen delay': 500,
+                'max reconnection attempts': 10
+            });
+        } catch (e) {
+            throw new RangeError('Unable connect to server. Please, start node.js app!');
+        }
+    },
+    init: function(host) {
+        this.urlIO = host;
+        this.connect();
+    }
+};
+```
+
+Вслед за этим вызывается функция `IM.connect()`, которая добавляет слушатель событий Socket.IO на клиенте. Этот слушатель работает аналогично слушателю на стороне сервера, но в обратном направлении. Обратите внимание на следующий пример:
+
+```javascript
+        this.socket.on('events', function(data) {
+            if (data.fn) {
+                IM[data.fn](data.message);
+            }
+        });
+```
+
