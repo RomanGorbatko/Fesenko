@@ -71,28 +71,6 @@ io.sockets.on('connection', function (socket) {
 
 Эта информация нужна будет для того, что бы отследить владельца socket-коннекта и дать возможность приложению четко определять конечного клиента для отправки сокета.
 
-** Обработчик событий (server-side): **
-```javascript
-    socket.on('events', function(post) {
-        socket.handshake.getSession(function(err, session) {
-            post['data']['session'] = session;
-            im.IM[post.fn](post.data);
-        });
-    });
-```
-Данный участок кода "слушает события" и когда с клиента приходит информация, вызывает функцию объекта `im.IM`, название которой хранится в data.fn.
-
-** Структура сообщений client-server/server-client: **
-```json
-{
-    fn: <string>,
-    data: <object>
-}
-```
-
-fn - имя вызываемой функции
-data - информация которая передается
-
 # Разработка клиентской части
 
 
@@ -173,3 +151,27 @@ Node = {
         });
 ```
 
+
+
+
+**Обработчик событий (server-side):**
+```javascript
+    socket.on('events', function(post) {
+        socket.handshake.getSession(function(err, session) {
+            post['data']['session'] = session;
+            im.IM[post.fn](post.data);
+        });
+    });
+```
+Данный участок кода "слушает события" и когда с клиента приходит информация, вызывает функцию объекта `im.IM`, название которой хранится в data.fn.
+
+**Структура сообщений client-server/server-client:**
+```json
+{
+    fn: <string>,
+    data: <object>
+}
+```
+
+fn - имя вызываемой функции
+data - информация которая передается
