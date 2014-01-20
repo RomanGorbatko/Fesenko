@@ -45,3 +45,12 @@ var server = http.createServer(app).listen(app.get('port'), function(){
 // к серверу Express/HTTP
 var io = require('socket.io').listen(server);
 ```
+
+Весь код серверной части приложения вынесен в отдельные файлы-модули ./routes/*.js. Этоти файлы подключается в приложение в качестве модуля Node с помощью следующего фрагмента кода (прим.): var im = require('./routes/im');. Когда клиент подключается к приложению с помощью Socket.IO, модуль `im` должен выполнять функцию `setConnection` в которую будет передан сокет-объект. За это отвечает следующий фрагмент кода:
+
+```javascript
+io.sockets.on('connection', function (socket) {
+    im.IM.parentSocket = io.sockets;
+    im.IM.setConnection(socket);
+});
+```
