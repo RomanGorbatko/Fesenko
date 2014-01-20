@@ -151,7 +151,7 @@ Node = {
         });
 ```
 
-
+# Other info
 
 
 **Обработчик событий (server-side):**
@@ -175,3 +175,45 @@ Node = {
 
 fn - имя вызываемой функции
 data - информация которая передается
+
+**Disconnect socket:**
+Внутреннее socket.io-событие `disconnect` вызывается в момент "обрыва" связи между клиентом и сервером. 
+В этом случае нам нужно очистить информацию о потзователе из двух хранилишь:
+im.IM.connectedUsers - общий объект в котром хранится хэш-таблица о подключенных пользотвателях, структура:
+```json
+{
+    <session_id>: [
+        <socket_id1>,
+        <socket_id2>,
+        <socket_id3>,
+    ]
+}
+```
+im.IM.inDialog - объект хранящий в себе информацию о диалогах в которых в данный момент находится пользователь, структура:
+```json
+{
+    <session_id>: [
+        <dialog_id1>,
+        <dialog_id2>,
+        <dialog_id3>,
+    ]
+}
+```
+
+```javascript
+    socket.on('disconnect', function () {
+        socket.handshake.getSession(function(err, session) {
+            if (im.IM.connectedUsers[session._sessionid] !== undefined) {
+                im.IM.connectedUsers[session._sessionid].forEach(function(sock, index) {
+                    if (sock == socket.id) {
+                        im.IM.connectedUsers[session._sessionid].splice(index, 1);
+                    }
+                });
+            }
+
+            if (im.IM.inDialog[session._sessionid] !== undefined) {
+                delete im.IM.inDialog[session._sessionid];
+            }
+        });
+    });
+```
