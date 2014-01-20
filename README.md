@@ -223,4 +223,19 @@ Node = {
 ```
 
 
-=== Основные функции
+# Основные функции (server-side)
+
+* **buildDialogs** - функция которая возвращает список диалогов, в том случае, если они есть, и отрпавляет полученный объект на рендер в `./views/im.ejs`:
+
+```javascript
+    buildDialogs: function() {
+        dialogsDb.find({}, function(err, dialogs) {
+            if (err) throw err;
+            if (dialogs.length) {
+                
+            } else {
+                
+            }
+        });
+    },
+```
