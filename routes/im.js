@@ -147,6 +147,13 @@ exports.IM = IM = {
                 });
             });
         });
+    },
+    setRoomName: function(data) {
+        dialogsDb.updateById(data._id, {$set: {name: data.name}}, function() {
+            IM.connectedUsers[data.session._sessionid].forEach(function(sock, index) {
+                IM.parentSocket.socket(sock).emit('events', {fn: 'updateRoomName', message: {name: data.name, _id: data._id}});
+            });
+        });
     }
 };
 

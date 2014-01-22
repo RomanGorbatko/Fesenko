@@ -37,7 +37,7 @@ exports.logOut = function(request, response) {
     delete request.session.username;
     delete request.session.user_id;
 
-    response.redirect('/');
+    response.redirect(301, '/');
     response.end();
 };
 

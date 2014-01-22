@@ -65,6 +65,20 @@ IM = {
                 $('.user_list').html(html);
             }
         }
+    },
+    showInput: function(_id) {
+        $('p#dialog_' + _id + ' a:eq(0)').hide();
+        $('p#dialog_' + _id + ' input[type=text]').show();
+        $('p#dialog_' + _id + ' a:eq(1)').text('save').attr('onclick', 'IM.setRoomName(this, \'' + _id + '\'); return false;');
+    },
+    setRoomName: function(el, _id) {
+        this.socket.emit('events', {fn: 'setRoomName', data: {name: $(el).prev().val(), _id: _id}});
+    },
+    updateRoomName: function(data) {
+        console.log(data);
+        $('p#dialog_' + data._id + ' a:eq(0)').text(data.name).show();
+        $('p#dialog_' + data._id + ' input[type=text]').val('').hide();
+        $('p#dialog_' + data._id + ' a:eq(1)').text('save').attr('onclick', 'IM.showInput(\'' + data._id + '\'); return false;');
     }
 };
 
