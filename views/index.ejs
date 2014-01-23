@@ -13,8 +13,10 @@
     </div>
     <div class="p_top80 home_wrap">
       <%if (user_name !== undefined) { %>
-          <p>Приветствуем, <%= user_name %>!</p>
+        <div class="empty-dialogs-list">
+          <p style="color:#f8f8f8;">Приветствуем, <%= user_name %>!</p>
           <a href="/dialogs">Dialogs</a>
+        </div>>
       <% } else { %>
           <span class=""><a class="login" href="/users/login">Логин</a></span>
           <span class=""><a class="register" href="/users/register">Регестрация</a></span>
